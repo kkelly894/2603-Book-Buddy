@@ -1,15 +1,26 @@
 import { NavLink } from "react-router";
 
-export default function Navbar() {
+export default function Navbar({ token, setToken }) {
+  function handleLogout() {
+    localStorage.removeItem("token");
+    setToken(null);
+  }
+
   return (
-    <nav>
-      <NavLink to="/">Books</NavLink>
+    <header>
+      <p>Book Buddy</p>
 
-      <NavLink to="/login">Login</NavLink>
+      <nav>
+        <NavLink to="/">Books</NavLink>
 
-      <NavLink to="/register">Register</NavLink>
+        {!token && <NavLink to="/login">Login</NavLink>}
 
-      <NavLink to="/account">Account</NavLink>
-    </nav>
+        {!token && <NavLink to="/register">Register</NavLink>}
+
+        {token && <NavLink to="/account">Account</NavLink>}
+
+        {token && <button onClick={handleLogout}>Logout</button>}
+      </nav>
+    </header>
   );
 }

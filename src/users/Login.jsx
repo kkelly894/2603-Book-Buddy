@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { registerUser } from "../api/auth";
+import { loginUser } from "../api/auth";
 
-export default function Register({ setToken }) {
+export default function Login({ setToken }) {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  async function handleRegister(event) {
+  async function handleLogin(event) {
     event.preventDefault();
 
     setError(null);
@@ -14,43 +14,33 @@ export default function Register({ setToken }) {
     const formData = new FormData(event.target);
 
     const userInfo = {
-      firstname: formData.get("firstname"),
-      lastname: formData.get("lastname"),
       email: formData.get("email"),
       password: formData.get("password"),
     };
 
-    const result = await registerUser(userInfo);
+    const result = await loginUser(userInfo);
 
-    console.log("register result", result);
+    console.log("login result", result);
 
     if (result && result.token) {
+      localStorage.setItem("token", result.token);
       setToken(result.token);
-      setSuccessMessage("You've been successfully registered.");
+
+      setSuccessMessage("You've been successfully logged in.");
     } else {
-      setError(result?.message || "There was an error registering.");
+      setError(result?.message || "There was an error logging in.");
     }
   }
 
   return (
     <section>
-      <h2>Register</h2>
+      <h1>Login</h1>
 
       {error && <p>{error}</p>}
 
       {successMessage && <p>{successMessage}</p>}
 
-      <form onSubmit={handleRegister}>
-        <label>
-          First Name
-          <input type="text" name="firstname" required />
-        </label>
-
-        <label>
-          Last Name
-          <input type="text" name="lastname" required />
-        </label>
-
+      <form onSubmit={handleLogin}>
         <label>
           Email
           <input type="email" name="email" required />
@@ -61,7 +51,7 @@ export default function Register({ setToken }) {
           <input type="password" name="password" required />
         </label>
 
-        <button>Register</button>
+        <button>Login</button>
       </form>
     </section>
   );

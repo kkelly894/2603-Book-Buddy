@@ -1,9 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { reserveBook } from "../api/reservations";
 
-import { useParams } from "react-router";
-
-export default function BookDetails({ book, setSelectedBookId, token }) {
+export default function BookDetails({ book, setBook, token }) {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
@@ -16,6 +15,11 @@ export default function BookDetails({ book, setSelectedBookId, token }) {
       return;
     }
 
+    if (!book.available) {
+      setError("This book is already reserved.");
+      return;
+    }
+
     try {
       const result = await reserveBook(book.id, token);
 
@@ -23,6 +27,11 @@ export default function BookDetails({ book, setSelectedBookId, token }) {
 
       if (result) {
         setSuccessMessage("Book reserved successfully.");
+
+        setBook({
+          ...book,
+          available: false,
+        });
       } else {
         setError("There was an error reserving this book.");
       }
@@ -52,7 +61,9 @@ export default function BookDetails({ book, setSelectedBookId, token }) {
         <button onClick={handleReserveBook}>Reserve Book</button>
       )}
 
-      <button onClick={() => setSelectedBookId(null)}>Back to all Books</button>
+      <Link to="/" className="book-link">
+        Back to all Books
+      </Link>
     </section>
   );
 }

@@ -11,6 +11,7 @@ export async function registerUser(userInfo) {
     });
 
     const result = await response.json();
+
     return result;
   } catch (error) {
     console.error("There was an error registering", error);
@@ -29,6 +30,7 @@ export async function loginUser(userInfo) {
     });
 
     const result = await response.json();
+
     return result;
   } catch (error) {
     console.error("There was an error logging in", error);

@@ -1,10 +1,10 @@
-import { Outlet } from "react-router";
 import Navbar from "./Navbar";
+import { Outlet } from "react-router";
 
-export default function Layout() {
+export default function Layout({ token, setToken }) {
   return (
     <>
-      <Navbar />
+      <Navbar token={token} setToken={setToken} />
 
       <main>
         <Outlet />

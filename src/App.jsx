@@ -1,50 +1,39 @@
-import { useEffect, useState } from "react";
-import { getBooks } from "./api/books";
-import BookList from "./components/BookList";
-import BookDetails from "./components/BookDetails";
-import Register from "./components/Register";
-import Login from "./components/Login";
+import { useState } from "react";
+import { Routes, Route } from "react-router";
 
-import { Route, Routes } from "react-router";
+import Layout from "./layout/Layout";
+import BooksPage from "./books/BooksPage";
+import BookDetailsPage from "./books/BookDetailsPage";
+import Login from "./users/Login";
+import Register from "./users/Register";
+import AccountPage from "./users/AccountPage";
+import Error404 from "../Error404";
 
 export default function App() {
-  const [books, setBooks] = useState([]);
-  const [selectedBookId, setSelectedBookId] = useState(null);
-  const [token, setToken] = useState(null);
-
-  useEffect(() => {
-    async function loadBooks() {
-      try {
-        const bookData = await getBooks();
-        setBooks(bookData || []);
-      } catch (error) {
-        console.error("There was an error loading books", error);
-      }
-    }
-
-    loadBooks();
-  }, []);
-
-  const selectedBook = books.find((book) => {
-    return book.id === selectedBookId;
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem("token");
   });
 
   return (
-    <main>
-      <h1>Book Buddy</h1>
+    <Routes>
+      <Route path="/" element={<Layout token={token} setToken={setToken} />}>
+        <Route index element={<BooksPage />} />
 
-      <Register setToken={setToken} />
-      <Login setToken={setToken} />
+        <Route path="/books" element={<BooksPage />} />
 
-      {selectedBook ? (
-        <BookDetails
-          book={selectedBook}
-          setSelectedBookId={setSelectedBookId}
-          token={token}
+        <Route
+          path="/books/:bookId"
+          element={<BookDetailsPage token={token} />}
         />
-      ) : (
-        <BookList books={books} setSelectedBookId={setSelectedBookId} />
-      )}
-    </main>
+
+        <Route path="/login" element={<Login setToken={setToken} />} />
+
+        <Route path="/register" element={<Register setToken={setToken} />} />
+
+        <Route path="/account" element={<AccountPage token={token} />} />
+
+        <Route path="*" element={<Error404 />} />
+      </Route>
+    </Routes>
   );
 }
